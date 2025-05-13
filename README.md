@@ -18,6 +18,12 @@ A **workspace**, in this context, is a collection of applications (with custom c
 
 ## Installation
 
+You need [Hammerspoon](https://www.hammerspoon.org) installed on your system, for example via:
+```sh
+brew install --cask hammerspoon
+```
+
+Then:
 ```bash
 cd ~/.hammerspoon
 git clone https://github.com/ajallooe/Hammerspoon-workspace-launcher.git
@@ -26,7 +32,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Then reload your Hammerspoon config from the menu bar.
+Then launch Hammerspoon, of it is already runnig, reload your Hammerspoon config from the menu bar.
 
 ## Usage
 

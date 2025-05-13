@@ -19,7 +19,7 @@ A **workspace**, in this context, is a collection of applications (with custom c
 ## Installation
 
 You need [Hammerspoon](https://www.hammerspoon.org) installed on your system, for example via:
-```sh
+```bash
 brew install --cask hammerspoon
 ```
 

@@ -1,7 +1,7 @@
 # Hammerspoon Workspace Launcher
 
 A lightweight utility to save, restore, and launch **workspaces** on macOS using [Hammerspoon](http://www.hammerspoon.org).  
-A **workspace** is a collection of applications (with custom context) and a specific layout of their windows across your screens.
+A **workspace**, in this context, is a collection of applications (with custom context) and a specific layout of their windows across your screens.
 
 ## Features
 

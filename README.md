@@ -19,11 +19,13 @@ A **workspace**, in this context, is a collection of applications (with custom c
 ## Installation
 
 You need [Hammerspoon](https://www.hammerspoon.org) installed on your system, for example via:
+
 ```bash
 brew install --cask hammerspoon
 ```
 
 Then:
+
 ```bash
 cd ~/.hammerspoon
 git clone https://github.com/ajallooe/Hammerspoon-workspace-launcher.git
@@ -51,7 +53,7 @@ Press `⌘ + ⌥ + ⌃ + \`` to open the command prompt and type:
 
 User-defined workspace configs live in:
 
-```
+```bash
 ~/.hammerspoon/workspaces/
 ```
 
@@ -60,18 +62,18 @@ Each workspace consists of:
 - `<name>.apps.lua`: defines what to launch and how
 - `<name>.placement.lua`: defines window positions
 
-
 ### Sample Workspace
 
 A complete example workspace is available in:
 
-```
+```bash
 workspaces_sample/sample.apps.lua
 ```
 
 You can copy this file into your `~/.hammerspoon/workspaces/` directory and rename it to get started.
 
 The sample demonstrates usage for:
+
 - Chrome
 - Safari
 - VSCode
@@ -79,7 +81,6 @@ The sample demonstrates usage for:
 - Finder
 - Obsidian
 - A generic macOS app (here we gave an example for Calibre)
-
 
 ## Notes & Limitations
 

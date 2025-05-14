@@ -31,24 +31,33 @@ function M.launch(project)
             chrome.profile, launchUrls))
     end
 
+    -- Microsoft Edge
+    if config.edge then
+        local edge = config.edge
+        local urls = edge.urls or {}
+        local launchUrls = #urls > 0 and ('"' .. table.concat(urls, '" "') .. '"') or localTabGroupPage(config.title or project)
+        hs.execute(string.format('open -na "Microsoft Edge" --args --profile-directory="%s" %s',
+            edge.profile, launchUrls))
+    end
+
     -- Safari
     if config.safari then
         local urls = config.safari.urls or {}
         if #urls > 0 then
             local script = string.format([[
-                tell application "Safari"
-                    activate
-                    make new document
-                    set URL of front document to "%s"
-                    tell front window
-            ]], urls[1])
+    tell application "Safari"
+        set W to make new document with properties {URL:"%s"}
+        delay 0.3
+        tell W
+]], urls[1])
             for i = 2, #urls do
                 script = script .. string.format('\nmake new tab with properties {URL:"%s"}', urls[i])
             end
             script = script .. [[
-                    end tell
-                end tell
-            ]]
+        end tell
+        activate
+    end tell
+]]
             hs.osascript.applescript(script)
         else
             hs.execute(string.format('open -a Safari "%s"', localTabGroupPage(config.title or project)))

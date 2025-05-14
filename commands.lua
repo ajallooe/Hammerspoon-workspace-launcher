@@ -40,52 +40,46 @@ local function restoreLayout(name)
 end
 
 M.showCommandPrompt = function()
-    local chooser = hs.chooser.new(function(choice)
-        if not choice then return end
-        local input = choice.subText or ""
-        local cmd, arg = input:match("^(%S+)%s*(.*)$")
+    local button, input = hs.dialog.textPrompt(
+        "Workspace Launcher",
+        "Enter command (e.g. s home, p dev, r blog):",
+        "",
+        "Run",
+        "Cancel"
+    )
 
-        if cmd == "d" then
-            for _, win in ipairs(hs.window.allWindows()) do
-                local app, title = win:application():name(), win:title()
-                local f = win:frame()
-                print(string.format('[%s] "%s"\n  Position: {x = %d, y = %d}, Size: {w = %d, h = %d}', app, title, f.x, f.y, f.w, f.h))
-            end
-            hs.alert.show("Window info dumped")
+    if button ~= "Run" or not input or input == "" then return end
 
-        elseif cmd == "s" and arg ~= "" then
-            saveCurrentLayout(arg)
+    local cmd, arg = input:match("^(%S+)%s*(.*)$")
 
-        elseif cmd == "r" and arg ~= "" then
-            restoreLayout(arg)
-
-        elseif cmd == "l" and arg ~= "" then
-            launcher.launch(arg)
-
-        elseif cmd == "p" and arg ~= "" then
-            launcher.launch(arg)
-            hs.timer.doAfter(6, function() restoreLayout(arg) end)
-
-        elseif cmd == "e" then
-            hs.execute("open -a Terminal \"" .. workspaceDir .. "\"")
-            hs.alert.show("Opened workspace folder in Terminal")
-
-        else
-            hs.alert.show("Unknown command")
+    if cmd == "d" then
+        for _, win in ipairs(hs.window.allWindows()) do
+            local app, title = win:application():name(), win:title()
+            local f = win:frame()
+            print(string.format('[%s] "%s"\n  Position: {x = %d, y = %d}, Size: {w = %d, h = %d}', app, title, f.x, f.y, f.w, f.h))
         end
-    end)
+        hs.alert.show("Window info dumped")
 
-    chooser:choices({
-        { text = "Dump window positions", subText = "d" },
-        { text = "Save current layout", subText = "s <workspace>" },
-        { text = "Restore layout", subText = "r <workspace>" },
-        { text = "Launch apps only", subText = "l <workspace>" },
-        { text = "Launch apps and layout", subText = "p <workspace>" },
-        { text = "Open workspace folder", subText = "e" }
-    })
-    chooser:placeholderText("Type a command like: s <workspace> or p <workspace>")
-    chooser:width(50)
-    chooser:show()
+    elseif cmd == "s" and arg ~= "" then
+        saveCurrentLayout(arg)
+
+    elseif cmd == "r" and arg ~= "" then
+        restoreLayout(arg)
+
+    elseif cmd == "l" and arg ~= "" then
+        launcher.launch(arg)
+
+    elseif cmd == "p" and arg ~= "" then
+        launcher.launch(arg)
+        hs.timer.doAfter(6, function() restoreLayout(arg) end)
+
+    elseif cmd == "e" then
+        hs.execute("open -a Terminal \"" .. workspaceDir .. "\"")
+        hs.alert.show("Opened workspace folder in Terminal")
+
+    else
+        hs.alert.show("Unknown command")
+    end
 end
 
 return M

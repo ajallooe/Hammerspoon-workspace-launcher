@@ -24,6 +24,14 @@ return {
     }
   },
 
+  edge = {
+    profile = "Profile 1",
+    urls = {
+      "https://learn.microsoft.com",
+      "https://outlook.live.com"
+    }
+  },
+
   code = {
     profile = "Web Dev",
     workspace = "~/Projects/sample.code-workspace"
@@ -50,7 +58,14 @@ return {
 
   generic = {
     apps = {
-      { name = "Calibre" }
+      { name = "Calibre" },
+      { name = "ChatGPT" },
+      { name = "Slack" },
+      { name = "Microsoft Teams" },
+      { name = "Microsoft OneNote" },
+      { name = "Microsoft Outlook" },
+      { name = "Notability" },
+      { name = "Zotero" }
     }
   }
 }

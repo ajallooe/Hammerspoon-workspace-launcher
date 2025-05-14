@@ -40,8 +40,8 @@ Then launch Hammerspoon, of it is already runnig, reload your Hammerspoon config
 
 Press `⌘ + ⌥ + ⌃ + \`` to open the command prompt and type:
 
-| Command           | Description                            |
-|------------------|----------------------------------------|
+| Command          | Description                             |
+|------------------|-----------------------------------------|
 | `d`              | Dump all window positions to Console    |
 | `s <name>`       | Save current layout as `<name>`         |
 | `r <name>`       | Restore layout from `<name>`            |

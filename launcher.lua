@@ -1,3 +1,7 @@
+local function escape_osascript_string(s)
+    return s:gsub('\\', '\\\\'):gsub('"', '\\"')
+end
+
 local M = {}
 
 local workspaceDir = os.getenv("HOME") .. "/.hammerspoon/workspaces"
@@ -27,7 +31,7 @@ function M.launch(project)
         local chrome = config.chrome
         local urls = chrome.urls or {}
         local launchUrls = #urls > 0 and ('"' .. table.concat(urls, '" "') .. '"') or localTabGroupPage(config.title or project)
-        hs.execute(string.format('open -na "Google Chrome" --args --profile-directory="%s" %s',
+        hs.execute(string.format('open -na "Google Chrome" --args --new-window --profile-directory="%s" %s',
             chrome.profile, launchUrls))
     end
 
@@ -36,8 +40,9 @@ function M.launch(project)
         local edge = config.edge
         local urls = edge.urls or {}
         local launchUrls = #urls > 0 and ('"' .. table.concat(urls, '" "') .. '"') or localTabGroupPage(config.title or project)
-        hs.execute(string.format('open -na "Microsoft Edge" --args --profile-directory="%s" %s',
+        hs.execute(string.format('open -na "Microsoft Edge" --args --new-window --profile-directory="%s" %s',
             edge.profile, launchUrls))
+        hs.execute('open -a "Microsoft Edge"')
     end
 
     -- Safari
@@ -66,8 +71,12 @@ function M.launch(project)
 
     -- VSCode
     if config.code then
-        hs.execute(string.format('code "%s" --profile "%s"',
-            config.code.workspace, config.code.profile))
+        local vscodeBin = hs.execute(". ~/.hammerspoon/hammerspoon_env.sh; which code"):gsub("%s+$", "")
+        if vscodeBin and vscodeBin ~= "" then
+            hs.execute(string.format('. ~/.hammerspoon/hammerspoon_env.sh; %s --profile "%s" "%s"', vscodeBin, config.code.profile, config.code.workspace))
+        else
+            hs.alert.show("VSCode CLI 'code' not found in PATH")
+        end
     end
 
     -- Finder
@@ -95,10 +104,13 @@ function M.launch(project)
 
     -- iTerm
     if config.iterm then
-        local script = [[tell application "iTerm2" to create window with default profile]]
+        local script = [[
+tell application "iTerm2"
+    create window with default profile
+]]
         for i, tab in ipairs(config.iterm.tabs or {}) do
             if i == 1 then
-                script = script .. string.format('\ntell current session of current window\nwrite text "%s"\nend tell', tab.command)
+                script = script .. string.format('\ntell current session of current window\nwrite text "%s"\nend tell', escape_osascript_string(tab.command))
             else
                 script = script .. string.format([[
                     tell current window
@@ -106,7 +118,7 @@ function M.launch(project)
                         tell current session
                             write text "%s"
                         end tell
-                    end tell]], tab.profile, tab.command)
+                    end tell]], tab.profile, escape_osascript_string(tab.command))
             end
         end
         hs.osascript.applescript(script .. "\nend tell")

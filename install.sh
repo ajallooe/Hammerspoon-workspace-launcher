@@ -6,6 +6,10 @@ INIT_FILE="$HAMMER_DIR/init.lua"
 WORKSPACES_DIR="$HAMMER_DIR/workspaces"
 REQUIRE_LINE='require("hammerspoon-workspace-launcher.hotkey")'
 
+# Export PATH to ensure Hammerspoon inherits full shell environment
+SHELL_ENV="$HOME/.hammerspoon/hammerspoon_env.sh"
+echo "export PATH=\"$PATH\"" > "$SHELL_ENV"
+
 # Ensure workspace directory exists
 mkdir -p "$WORKSPACES_DIR"
 

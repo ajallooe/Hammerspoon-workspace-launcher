@@ -13,8 +13,9 @@ A **workspace**, in this context, is a collection of applications (with custom c
   - Obsidian vaults and files
   - iTerm2 tabs with profiles and commands
   - Finder tabs with specific folders
-- One hotkey (`⌘ + ⌥ + ⌃ + \``) for all commands
+- One hotkey (`⌘ + ⌥ + ⌃ + \``) for all workspace/project commands
 - Fully customizable and scriptable
+- Visually highlights the currently focused window with a customizable border (toggle with ⌘ + ⌥ + ⌃ + -)
 
 ## Installation
 
@@ -48,6 +49,7 @@ Press `⌘ + ⌥ + ⌃ + \`` to open the command prompt and type:
 | `l <name>`       | Launch apps for workspace `<name>`      |
 | `p <name>`       | Launch apps and restore layout          |
 | `e`              | Open your workspaces folder in Terminal |
+| `⌘ + ⌥ + ⌃ + -`   | Toggle active window border overlay       |
 
 ## Your Workspaces
 
@@ -89,6 +91,12 @@ The sample demonstrates usage for:
 - The current system supports launching only one instance of each application per workspace. For example, you cannot launch two different Chrome profiles as part of the same workspace without extending the underlying logic.
 
 - You can add support for other apps or more complex workflows by editing `launcher.lua`. This is a modular, scriptable system designed to grow with your needs.
+
+## Window Border Overlay
+
+A visual border is drawn around the currently focused window to make it easy to track where your attention is. This feature is active by default and can be toggled on/off using the hotkey ⌘ + ⌥ + ⌃ + -.
+
+The appearance of the border can be customized by editing the `config.lua` file under the `border` section.
 
 ## License
 

@@ -1,18 +1,38 @@
+-- Workspace Launcher Module
+-- 
+-- Launches a predefined set of applications, browser tabs, and tools for a given workspace name.
+-- It loads configuration files from ~/.hammerspoon/workspaces/<name>.apps.lua
+-- Each configuration may define multiple app categories:
+--   - chrome / edge / safari: Open a browser with specified URLs and profiles
+--   - code: Launch Visual Studio Code with a profile and workspace
+--   - finder: Open Finder windows for specific file paths
+--   - iterm: Launch iTerm2 with tabs and commands
+--   - obsidian: Open Obsidian with a vault and file
+--   - generic: Launch any other macOS apps by name
+-- 
+-- This module is used by commands.lua to trigger a workspace launch by name.
+-- The workspace launcher is invoked through a configurable hotkey defined in config.lua (`hotkeys.launchWorkspace`).
+
 local function escape_osascript_string(s)
     return s:gsub('\\', '\\\\'):gsub('"', '\\"')
 end
+
 
 local M = {}
 
 local workspaceDir = os.getenv("HOME") .. "/.hammerspoon/workspaces"
 local defaultFile = os.getenv("HOME") .. "/.hammerspoon/browser_fallback.html"
 
+
+-- Main function to launch a workspace setup by name
+-- Loads the corresponding config file and dispatches actions for each app/tool type
 function M.launch(project)
     local ok, config = pcall(dofile, workspaceDir .. "/" .. project .. ".apps.lua")
     if not ok then
         hs.alert.show("Couldn't load: " .. project)
         return
     end
+
 
     -- fallback URL for tab group hint
     local function localTabGroupPage(title)
@@ -26,7 +46,8 @@ function M.launch(project)
         return "file://" .. defaultFile
     end
 
-    -- Chrome
+
+    -- Launch Chrome browser with profile and URLs (if any)
     if config.chrome then
         local chrome = config.chrome
         local urls = chrome.urls or {}
@@ -35,7 +56,8 @@ function M.launch(project)
             chrome.profile, launchUrls))
     end
 
-    -- Microsoft Edge
+
+    -- Launch Microsoft Edge with profile and URLs (if any)
     if config.edge then
         local edge = config.edge
         local urls = edge.urls or {}
@@ -45,23 +67,24 @@ function M.launch(project)
         hs.execute('open -a "Microsoft Edge"')
     end
 
-    -- Safari
+
+    -- Launch Safari with specified URLs or fallback page
     if config.safari then
         local urls = config.safari.urls or {}
         if #urls > 0 then
             local script = string.format([[
-    tell application "Safari"
-        set W to make new document with properties {URL:"%s"}
-        delay 0.3
-        tell W
+tell application "Safari"
+    set W to make new document with properties {URL:"%s"}
+    delay 0.3
+    tell W
 ]], urls[1])
             for i = 2, #urls do
-                script = script .. string.format('\nmake new tab with properties {URL:"%s"}', urls[i])
+                script = script .. string.format('\n        make new tab with properties {URL:"%s"}', urls[i])
             end
             script = script .. [[
-        end tell
-        activate
     end tell
+    activate
+end tell
 ]]
             hs.osascript.applescript(script)
         else
@@ -69,7 +92,8 @@ function M.launch(project)
         end
     end
 
-    -- VSCode
+
+    -- Launch Visual Studio Code with profile and workspace
     if config.code then
         local vscodeBin = hs.execute(". ~/.hammerspoon/hammerspoon_env.sh; which code"):gsub("%s+$", "")
         if vscodeBin and vscodeBin ~= "" then
@@ -79,30 +103,32 @@ function M.launch(project)
         end
     end
 
-    -- Finder
+
+    -- Open Finder windows to listed directories
     if config.finder then
         local locs = config.finder.locations or {}
         if #locs > 0 then
-            local script = string.format('tell application "Finder"\nactivate\nmake new Finder window to (POSIX file "%s")\nend tell\n', locs[1])
+            local script = string.format('tell application "Finder"\n    activate\n    make new Finder window to (POSIX file "%s")\nend tell\n', locs[1])
             for i = 2, #locs do
                 script = script .. string.format([[
-                    tell application "System Events"
-                        tell process "Finder"
-                            delay 0.3
-                            keystroke "t" using {command down}
-                            delay 0.2
-                            keystroke "g" using {shift down, command down}
-                            delay 0.2
-                            keystroke "%s" & return
-                        end tell
-                    end tell
-                ]], locs[i])
+tell application "System Events"
+    tell process "Finder"
+        delay 0.3
+        keystroke "t" using {command down}
+        delay 0.2
+        keystroke "g" using {shift down, command down}
+        delay 0.2
+        keystroke "%s" & return
+    end tell
+end tell
+]], locs[i])
             end
             hs.osascript.applescript(script)
         end
     end
 
-    -- iTerm
+
+    -- Launch iTerm2 and run specified commands in tabs
     if config.iterm then
         local script = [[
 tell application "iTerm2"
@@ -110,21 +136,22 @@ tell application "iTerm2"
 ]]
         for i, tab in ipairs(config.iterm.tabs or {}) do
             if i == 1 then
-                script = script .. string.format('\ntell current session of current window\nwrite text "%s"\nend tell', escape_osascript_string(tab.command))
+                script = script .. string.format('\ntell current session of current window\n    write text "%s"\nend tell', escape_osascript_string(tab.command))
             else
                 script = script .. string.format([[
-                    tell current window
-                        create tab with profile "%s"
-                        tell current session
-                            write text "%s"
-                        end tell
-                    end tell]], tab.profile, escape_osascript_string(tab.command))
+    tell current window
+        create tab with profile "%s"
+        tell current session
+            write text "%s"
+        end tell
+    end tell]], tab.profile, escape_osascript_string(tab.command))
             end
         end
         hs.osascript.applescript(script .. "\nend tell")
     end
 
-    -- Obsidian
+
+    -- Open Obsidian vault and file
     if config.obsidian then
         local url = string.format("obsidian://open?vault=%s", config.obsidian.vault)
         if config.obsidian.file then
@@ -133,7 +160,8 @@ tell application "iTerm2"
         hs.execute('open "' .. url .. '"')
     end
 
-    -- Generic macOS apps
+
+    -- Launch any additional generic macOS apps by name
     if config.generic and config.generic.apps then
         for _, app in ipairs(config.generic.apps) do
             if app.name then
@@ -142,5 +170,6 @@ tell application "iTerm2"
         end
     end
 end
+
 
 return M

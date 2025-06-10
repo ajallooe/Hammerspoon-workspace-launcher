@@ -13,7 +13,7 @@ A **workspace**, in this context, is a collection of applications (with custom c
   - Obsidian vaults and files
   - iTerm2 tabs with profiles and commands
   - Finder tabs with specific folders
-- One hotkey (`⌘ + ⌥ + ⌃ + \``) for all workspace/project commands
+- One hotkey (⌘ + ⌥ + ⌃ + \`) for all workspace/project commands
 - Fully customizable and scriptable
 - Visually highlights the currently focused window with a customizable border (toggle with ⌘ + ⌥ + ⌃ + -)
 
@@ -39,7 +39,7 @@ Then launch Hammerspoon, of it is already runnig, reload your Hammerspoon config
 
 ## Usage
 
-Press `⌘ + ⌥ + ⌃ + \`` to open the command prompt and type:
+Press *⌘ + ⌥ + ⌃ + \`* to open the command prompt and type:
 
 | Command          | Description                             |
 |------------------|-----------------------------------------|
@@ -49,7 +49,6 @@ Press `⌘ + ⌥ + ⌃ + \`` to open the command prompt and type:
 | `l <name>`       | Launch apps for workspace `<name>`      |
 | `p <name>`       | Launch apps and restore layout          |
 | `e`              | Open your workspaces folder in Terminal |
-| `⌘ + ⌥ + ⌃ + -`   | Toggle active window border overlay       |
 
 ## Your Workspaces
 
